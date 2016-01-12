@@ -3,16 +3,218 @@
 <head>
 <meta charset="UTF-8" />
 <title>Twenty-four Game</title>
+<script type="text/javascript">
+    var nums;
+    var target;
+    var output = new Array();
+    var OPS = ['+', '-', '*', '/'];
+    var allrpn = new Array();
+    var allnum = new Array();
+    var allop = new Array();
+
+
+    var createRPN = function (n) {
+        //createPRN 0 for number and 1 for operator
+        //E.g. for n = 4 start from 0000111 go to 0011100 find all with n zeros.
+        //E.g. for n = 5 start from 000001111 go to 001111000 find all with n zeros.
+        
+        for (var base = Math.pow(2, n - 1) - 1; base <= Math.pow(2, 2 * n - 3) - Math.pow(2, n - 2) ; base++) {
+            var basestring = "";
+            var count = 0;
+            var copy = base;
+            while (copy > 0) {
+                if (copy % 2 == 1) {
+                    //# of operations ++
+                    count++;
+                    basestring = "1" + basestring;
+                } else {
+                    basestring = "0" + basestring;
+                }
+                copy = Math.floor(copy / 2);
+            }
+            while (basestring.length < (2 * n - 1)) basestring = "0" + basestring;
+
+            
+            var valid = true;
+            var curOPcount = 0;
+            //operations must be less than operands (not even equal) from left to right, 
+            for (var index = 0 ; index < basestring.length; index++){
+                if (basestring.charAt(index) == '1') curOPcount++;
+                if (index + 1 - curOPcount <= curOPcount) { valid = false; break; }
+            }
+            if (!valid) continue;
+            if (count == n - 1) {
+                allrpn.push(basestring);
+            }
+        }
+    }
+    // from http://stackoverflow.com/questions/9960908/permutations-in-javascript
+    function createNumPerm(inputArr) {
+        var results = [];
+
+        function permute(arr, memo) {
+            var cur, memo = memo || [];
+
+            for (var i = 0; i < arr.length; i++) {
+                cur = arr.splice(i, 1);
+                if (arr.length === 0) {
+                    results.push(memo.concat(cur));
+                }
+                permute(arr.slice(), memo.concat(cur));
+                arr.splice(i, 0, cur[0]);
+            }
+
+            return results;
+        }
+
+        allnum = permute(inputArr);
+    }
+    //all operaters
+    function createOPPerm(numOfOp) {
+        if (numOfOp == 0) return;
+        var OPStrings = new Array();
+        OPStrings.push(OPS[0]);
+        OPStrings.push(OPS[1]);
+        OPStrings.push(OPS[2]);
+        OPStrings.push(OPS[3]);
+        for (var i = 1; i < numOfOp; i++) {
+            var size = OPStrings.length;
+            var temp = new Array();
+            for (var index = 0; index < size; index++) {
+                temp.push(OPStrings[index] + OPS[0]);
+                temp.push(OPStrings[index] + OPS[1]);
+                temp.push(OPStrings[index] + OPS[2]);
+                temp.push(OPStrings[index] + OPS[3]);
+            }
+            OPStrings = temp;
+        }
+        allop = OPStrings;
+    }
+
+var check = function () {
+    target = document.getElementById("target").value;
+    for (var i = 0; i < allrpn.length; i++) {
+        for (var j = 0; j < allnum.length ; j++) {
+            for (var k = 0; k < allop.length; k++) {
+                evaluateaddoutput(allrpn[i], allnum[j], allop[k]);
+            }
+        }
+    }
+}
+var evaluateaddoutput = function (rpn, num, op) {
+    var numstack = new Array();
+    var printstack = new Array();
+    var numpoint = 0;
+    var oppoint = 0;
+    try{
+        for (var i = 0 ; i < rpn.length; i++) {
+        if (rpn[i] == "0") {
+            //if it is number add to stack
+            numstack.push(num[numpoint]);
+            printstack.push(num[numpoint]+"");
+            numpoint++;
+        } else {
+            //if it is operator, consumes two number from stack top
+            var num1 = numstack.pop();
+            var num2 = numstack.pop();
+            var print1 = printstack.pop();
+            var print2 = printstack.pop();
+            switch (op[oppoint]) {
+                case "+": numstack.push(num2 + num1); printstack.push("(" + print2 + "+" + print1 + ")"); break;
+                case "*": numstack.push(num2 * num1); printstack.push("(" + print2 + "*" + print1 + ")"); break;
+                case "-": numstack.push(num2 - num1); printstack.push("(" + print2 + "-" + print1 + ")"); break;
+                case "/": numstack.push(num2 / num1); printstack.push("(" + print2 + "/" + print1 + ")"); break;
+                default:;
+            }
+            oppoint++;
+        }
+    }
+    var ans = numstack.pop();
+    if (target == ans) {
+        output.push(printstack.pop());
+    }
+    }catch(sb){
+        window.alert("error");
+    }
+
+
+}
+
+var init = function (nums) {
+    allrpn = new Array();
+    allnum = new Array();
+    allop = new Array();
+    createRPN(nums.length);
+    createNumPerm(nums);
+    createOPPerm(nums.length - 1);
+}
+
+var solve = function() {
+  nums = document.getElementById("nums").value.toLowerCase().split(" ");
+  for (var i = 0; i < nums.length; i++) {
+    switch (nums[i]) {
+      case 'j': nums[i] = 11; break;
+      case 'q': nums[i] = 12; break;
+      case 'a': nums[i] = 1; break;
+      default: nums[i] = Number(nums[i]);
+    }
+  }
+  init(nums);
+  check();
+
+  var t = output.join("<br/>");
+  if (output.length == 0) t = "No Answer!";
+  return t;
+};
+var displaySolve = function(t) {
+  document.getElementById("result").innerHTML = t;
+};
+
+function shuffle(array) {
+  var m = array.length, t, i;
+  while (m) {
+    i = Math.floor(Math.random() * m--);
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+  return array;
+}
+var generate = function () {
+  var n = document.getElementById("randomnum").value;
+  var arr = [];
+  for (var i = 0; i < 52; i++) {
+    arr.push(i);
+  }
+  shuffle(arr);
+  result = [];
+  for (var i = 0; i < n; i++) {
+    result.push(arr[i] % 13 + 1);
+  }
+  document.getElementById("nums").value = result.join(" ");
+};
+var answer = "";
+var stepSolve = function() {
+  var n = document.getElementById("result").innerHTML.length;
+  if (n == 0) answer = solve();
+  if (answer == "No Answer!")
+      document.getElementById("result").innerHTML = answer;
+    else
+      document.getElementById("result").innerHTML = answer.substring(0, n + 1);
+};
+</script>
 </head>
 <body>
-<h1>Twenty-four Game</h1>
-Note: Please use Chrome, not Firefox to ensure the speed.
+<h1>24 Game</h1>
+Used all numbers entered or generated and default operations (+-*/) to compute the target number 
 <p>
-Numbers (space-separated): <input type="text" id="nums" value="1 2 3 4 5 6" onchange=/> <input type="button" value="Random 6" onclick="generate(6);"/><br/>
-Target (24, 219, etc.): <input type="text" id="target" value="219"/><br/>
+Numbers (space-separated): <input type="text" id="nums" value="1 2 3 4 5 6"> 
+Or # of numbers to generate (no more than 52): <input type="text" id="randomnum" value="6"> <input type="button" value="generate" onclick="generate();"/><br/>
+Target: <input type="text" id="target" value="219"><br/>
+<input type="button" value="Solve!" onclick="displaySolve(solve());"/> <input type="button" value="Step" onclick="stepSolve();"/> <input type="button" value="Clear" onclick="displaySolve('');"/>
 </p>
 <div id="result"></div>
 <hr/>
-Powered by WZY, Oct 2015
+Powered by WZY, JAN 2016
 </body>
 </html>
