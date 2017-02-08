@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Date Calculator</title>
+<script type="text/javascript">
+  var calculate = function () {
+    var low =  new Date(document.getElementById("lowerbound").value);
+    var high =  new Date(document.getElementById("upperbound").value);
+    var time = high.getTime() - low.getTime()
+    var answer = 0;
+    if (document.getElementById("century").checked){
+       answer = answer + Math.floor(time/1000/3600/24/365/100) + " centruy(s) ";
+       time = time % (1000*3600*24*365*100);
+    }
+    if (document.getElementById("year").checked){
+       answer = answer + Math.floor(time/1000/3600/24/365) + " year(s) ";
+       time = time % (1000*3600*24*365);
+    }
+    if (document.getElementById("day").checked){
+      //round account for day light saving time!!!!!!!!
+       answer = answer + Math.round(time/1000/3600/24) + " day(s) ";
+       time = 0;
+    }
+    if (time != 0) {
+      answer = answer + "  plus a few days...      actually " + Math.round(time/1000/3600/24) + " day(s) ";
+    }
+
+
+    document.getElementById("result").innerHTML = answer;
+  }
+</script>
+</head>
+<body>
+<h1>Date Calculator</h1>
+Input two dates <br/>
+Hit Calculate to get difference
+<p>
+Start Date: <input type="text" id="lowerbound" value="MM/DD/YYYY" size="10"> <br/>
+End Date: <input type="text" id="upperbound" value="MM/DD/YYYY" size="10"> <br/>
+<input type="button" value="Calculate" onclick="calculate();"/> <br/> <br/>
+
+<input type="checkbox" id="century"> in centuries
+<input type="checkbox" id="year"> in years
+<input type="checkbox" id="day" checked=true> in days
+</p>
+<div id="result"></div>
+<hr/>
+Powered by WZY, JAN 2017
+</body>
+</html>
