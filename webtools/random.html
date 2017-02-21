@@ -5,16 +5,16 @@
 <title>Random Number Generator</title>
 <script type="text/javascript">
   var generate = function () {
-    var low = parseInt(document.getElementById("lowerbound").value);
-    var high = parseInt(document.getElementById("upperbound").value);
-    var answer = 0;
+    var low = parseFloat(document.getElementById("lowerbound").value);
+    var high = parseFloat(document.getElementById("upperbound").value);
+    var answer = 0.0;
     if (document.getElementById("mode").checked)
     {
       //get flat distribution. cal diff on center. rootpower for new diff. get actual.
       //Or do it reverse: expand low and high then rootpower for diff so that in range of input
 
-      var center = parseInt(document.getElementById("middle").value);
-      var power = parseInt(document.getElementById("power").value);
+      var center = parseFloat(document.getElementById("middle").value);
+      var power = Math.pow(2,parseFloat(document.getElementById("power").value));
 
       var newlow, newhigh;
       if (low < center){
@@ -52,15 +52,15 @@
 </head>
 <body>
 <h1>Random Number Generator</h1>
-Hit Generate to generate a random integer number (All param are int)
+Hit Generate to generate a random number
 <p>
-Range from(inclusive): <input type="text" id="lowerbound" value="0" size="4">
-To(inclusive): <input type="text" id="upperbound" value="100" size="4"> <br/>
+Range from(inclusive): <input type="text" id="lowerbound" value="0.0" size="4">
+To(inclusive): <input type="text" id="upperbound" value="100.0" size="4"> <br/>
 <input type="button" value="Generate" onclick="generate();"/> <br/> <br/>
 
-<input type="checkbox" id="mode" value="Centered"> Centered Around  <input type="text" id="middle" value="60" size="4">   with centripetal force<input type="text" id="power" value="2" size="2">
+<input type="checkbox" id="mode" value="Centered"> Centered Around  <input type="text" id="middle" value="60.0" size="4">   with centripetal force<input type="text" id="power" value="0.0" size="3">
 <br/>
-<input type="checkbox" id="int" value="GetInt"> Generate Integer
+<input type="checkbox" id="int" value="GetInt"> Generate Int
 </p>
 <div id="result"></div>
 <hr/>
