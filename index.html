@@ -3,6 +3,23 @@
   <head>
     <meta charset="UTF-8">
     <title>Mahuahua's GitHub Tour</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.ajax-cross-origin.min.js"></script>
+    <script>
+      $(document).ready(function(){
+          $("#SearchButton").click(function(){
+            searchText = $("#SearchText").val();
+
+            $.ajax({
+                 crossOrigin: true,
+                 url: "http://ec2-34-199-166-215.compute-1.amazonaws.com:9200",
+                 success: function(data) {
+                     alert("Data: " + data);
+                 }
+             });
+          });
+      });
+    </script>
   </head>
   <body>
       <h1>Mahuahua's GitHub Tour</h1>
@@ -10,5 +27,10 @@
       <li> Learn <a href="https://github.com/Mahuahua/OldAlgorithmTutorials" target="_blank">Algorithms</a> in Pascal</li>
       <li> Play <a href="http://Mahuahua.github.io/oldpascalgames.html" target="_blank">Simple Pascal Games</a></li>
       <li> Play <a href="https://github.com/Mahuahua/ConnectFiveAI" target="_blank"> Connect Five (Five in a Row)</a> in Python</li>
+      <br/><br/>
+      <input type="text" id="SearchText" value="Search for a repo" size="20">
+      <button id="SearchButton"> Search </button> <br/>
+
+      <div id="result"></div>
   </body>
 </html>
