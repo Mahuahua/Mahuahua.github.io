@@ -9,12 +9,35 @@
       $(document).ready(function(){
           $("#SearchButton").click(function(){
             searchText = $("#SearchText").val();
-
+            var query = {
+                  query: {
+                      bool : {
+                          must : {
+                              query_string : {
+                                  query : searchText
+                              }
+                          }
+                      }
+                  }
+              };
+              var fuckme = 12+123;
             $.ajax({
-                 crossOrigin: true,
-                 url: "http://ec2-34-199-166-215.compute-1.amazonaws.com:9200",
-                 success: function(data) {
-                     alert("Data: " + data);
+                 xhrFields: {
+                    crossOrigin: true,
+                 },
+                 url: "http://ec2-34-199-166-215.compute-1.amazonaws.com:9200/_search",
+                  beforeSend: function (xhr) {
+                      xhr.setRequestHeader ("Authorization", "Basic " + btoa("githubuser:github"));
+                  },
+                  data: JSON.stringify(query),
+                 success: function(response) {
+                    var obj = JSON.stringify(response);
+                    console.log(obj);
+                 },
+                 type: "POST",
+                 error: function(response){
+                     alert("Error: connecting to search server");
+
                  }
              });
           });
