@@ -4,43 +4,30 @@
     <meta charset="UTF-8">
     <title>Mahuahua's GitHub Tour</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="jquery.ajax-cross-origin.min.js"></script>
     <script>
       $(document).ready(function(){
+          var settings = {
+            "url": "http://ec2-34-199-166-215.compute-1.amazonaws.com:8049/es?query=*",
+            "method": "GET",
+          }
+          $.ajax(settings).done(function (response) {
+            console.log(response);
+          });
+
+
           $("#SearchButton").click(function(){
             searchText = $("#SearchText").val();
-            var query = {
-                  query: {
-                      bool : {
-                          must : {
-                              query_string : {
-                                  query : searchText
-                              }
-                          }
-                      }
-                  }
-              };
-              var fuckme = 12+123;
-            $.ajax({
-                 xhrFields: {
-                    crossOrigin: true,
-                 },
-                 url: "http://ec2-34-199-166-215.compute-1.amazonaws.com:9200/_search",
-                  beforeSend: function (xhr) {
-                      xhr.setRequestHeader ("Authorization", "Basic " + btoa("githubuser:github"));
-                  },
-                  data: JSON.stringify(query),
-                 success: function(response) {
-                    var obj = JSON.stringify(response);
-                    console.log(obj);
-                 },
-                 type: "POST",
-                 error: function(response){
-                     alert("Error: connecting to search server");
-
-                 }
-             });
-          });
+            if (searchText == "" || searchText == "Search for a repo"){
+              searchText = "*";
+            }
+            var settings = {
+              "url": "http://ec2-34-199-166-215.compute-1.amazonaws.com:8049/es?query=".concat(searchText),
+              "method": "GET",
+            }
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+          })
       });
     </script>
   </head>
