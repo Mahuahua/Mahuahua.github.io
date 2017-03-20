@@ -43,14 +43,17 @@
             return;
           }
            var table = document.createElement('table');
-           table.className = "table table-striped";
+           table.className = "table table-striped table-";
            var thead = table.createTHead();
+           var tr = document.createElement('tr');
            var td1 = document.createElement('td');
            var td2 = document.createElement('td');
            td1.appendChild(document.createTextNode('Repository Name'));
            td2.appendChild(document.createTextNode('Description'));
-           thead.appendChild(td1);
-           thead.appendChild(td2);
+           tr.appendChild(td1);
+           tr.appendChild(td2);
+           thead.appendChild(tr);
+           var tbody = document.createElement('tbody');
           for(var i in repos) {
               var tr = document.createElement('tr');
               var td1 = document.createElement('td');
@@ -59,8 +62,9 @@
               td2.appendChild(document.createTextNode(repos[i]['_source']['description']));
               tr.appendChild(td1);
               tr.appendChild(td2);
-              table.appendChild(tr);
+              tbody.appendChild(tr);
           }
+          table.appendChild(tbody);
           document.body.appendChild(table);
       }
 
