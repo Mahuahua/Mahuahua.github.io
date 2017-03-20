@@ -2,45 +2,79 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>Mahuahua's GitHub Tour</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap-theme.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+
+    <title>Mahuahua's GitHub Repositories</title>
     <script>
       $(document).ready(function(){
-          var settings = {
-            "url": "http://ec2-34-199-166-215.compute-1.amazonaws.com:8049/es?query=*",
-            "method": "GET",
+        var searchText = "*";
+        getDisplayItems(searchText);
+        $("#SearchButton").click(function(){
+          searchText = $("#SearchText").val();
+          if (searchText == "" || searchText == "Search for a repo"){
+            searchText = "*";
           }
-          $.ajax(settings).done(function (response) {
-            console.log(response);
-          });
-
-
-          $("#SearchButton").click(function(){
-            searchText = $("#SearchText").val();
-            if (searchText == "" || searchText == "Search for a repo"){
-              searchText = "*";
-            }
-            var settings = {
-              "url": "http://ec2-34-199-166-215.compute-1.amazonaws.com:8049/es?query=".concat(searchText),
-              "method": "GET",
-            }
-            $.ajax(settings).done(function (response) {
-              console.log(response);
-            });
-          })
+          getDisplayItems(searchText);
+        })
       });
+
+      function getDisplayItems(searchText)
+      {
+        var settings = {
+          "url": "http://ec2-34-199-166-215.compute-1.amazonaws.com:8049/es?query=".concat(searchText),
+          "method": "GET",
+        }
+        $.ajax(settings).done(function (response) {
+          console.log(response);
+          refreshDisplay(response);
+        });
+      }
+
+      function refreshDisplay(response){
+          $("table").remove();
+          $("div").html("");
+          repos = response.hits.hits;
+          if (repos.length == 0){
+            $("div").append("No repositories found");
+            return;
+          }
+           var table = document.createElement('table');
+           table.className = "table table-striped";
+           var thead = table.createTHead();
+           var td1 = document.createElement('td');
+           var td2 = document.createElement('td');
+           td1.appendChild(document.createTextNode('Repository Name'));
+           td2.appendChild(document.createTextNode('Description'));
+           thead.appendChild(td1);
+           thead.appendChild(td2);
+          for(var i in repos) {
+              var tr = document.createElement('tr');
+              var td1 = document.createElement('td');
+              var td2 = document.createElement('td');
+              td1.appendChild(document.createTextNode(repos[i]['_source']['repo-name']));
+              td2.appendChild(document.createTextNode(repos[i]['_source']['description']));
+              tr.appendChild(td1);
+              tr.appendChild(td2);
+              table.appendChild(tr);
+          }
+          document.body.appendChild(table);
+      }
+
+
     </script>
   </head>
   <body>
+
+    <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
       <h1>Mahuahua's GitHub Tour</h1>
-      <li> Web Development Tools: <a href="http://Mahuahua.github.io/webtools/" target="_blank">Click Here</a></li>
-      <li> Learn <a href="https://github.com/Mahuahua/OldAlgorithmTutorials" target="_blank">Algorithms</a> in Pascal</li>
-      <li> Play <a href="http://Mahuahua.github.io/oldpascalgames.html" target="_blank">Simple Pascal Games</a></li>
-      <li> Play <a href="https://github.com/Mahuahua/ConnectFiveAI" target="_blank"> Connect Five (Five in a Row)</a> in Python</li>
-      <br/><br/>
       <input type="text" id="SearchText" value="Search for a repo" size="20">
       <button id="SearchButton"> Search </button> <br/>
 
-      <div id="result"></div>
+      <div id="searchResult"></div>
+
   </body>
 </html>
