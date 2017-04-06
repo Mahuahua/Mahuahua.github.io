@@ -1,9 +1,8 @@
-This my entry point!
+## This my entry point!
 
-[Mahuahua.github.io](http://Mahuahua.github.io)
+#### [Mahuahua.github.io](http://Mahuahua.github.io)
 
-Find out my web tools and my repos from here!
-
+#### Find out my web tools and my repos from here!
 
 Also supports a list of web tools including
 
