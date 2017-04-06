@@ -11,12 +11,12 @@
     <title>Mahuahua's GitHub Repositories</title>
     <script>
       $(document).ready(function(){
-        var searchText = "*";
+        var searchText = "";
         getDisplayItems(searchText);
         $("#SearchButton").click(function(){
           searchText = $("#SearchText").val();
           if (searchText == "" || searchText == "Search for a repo"){
-            searchText = "*";
+            searchText = "";
           }
           getDisplayItems(searchText);
         })
@@ -24,8 +24,21 @@
 
       function getDisplayItems(searchText)
       {
+        var searchIn = "";
+        if (document.getElementById("name").checked){
+          searchIn = searchIn + ",name";
+        }
+        if (document.getElementById("description").checked){
+          searchIn = searchIn + ",description";
+        }
+        if (document.getElementById("readme").checked){
+          searchIn = searchIn + ",readme";
+        }
+        if (searchIn.length > 0){
+          searchIn = "&searchIn=" + searchIn.substring(1);
+        }
         var settings = {
-          "url": "http://ec2-34-199-166-215.compute-1.amazonaws.com:8049/es?query=".concat(searchText),
+          "url": "http://ec2-34-199-166-215.compute-1.amazonaws.com:8049/repo?query="+searchText+searchIn,
           "method": "GET",
         }
         $.ajax(settings).done(function (response) {
@@ -37,31 +50,42 @@
       function refreshDisplay(response){
           $("table").remove();
           $("div").html("");
-          repos = response.hits.hits;
-          if (repos.length == 0){
+          var repos = response.hits;
+          var hitCount = response.hit_count;
+          if (hitCount == 0){
             $("div").append("No repositories found");
             return;
           }
-           var table = document.createElement('table');
-           table.className = "table table-striped table-";
-           var thead = table.createTHead();
-           var tr = document.createElement('tr');
-           var td1 = document.createElement('td');
-           var td2 = document.createElement('td');
-           td1.appendChild(document.createTextNode('Repository Name'));
-           td2.appendChild(document.createTextNode('Description'));
-           tr.appendChild(td1);
-           tr.appendChild(td2);
-           thead.appendChild(tr);
-           var tbody = document.createElement('tbody');
-          for(var i in repos) {
+          var table = document.createElement('table');
+          table.className = "table table-striped table-";
+          var thead = table.createTHead();
+          var tr = document.createElement('tr');
+          var td1 = document.createElement('td');
+          var td2 = document.createElement('td');
+          var td3 = document.createElement('td');
+          td1.appendChild(document.createTextNode('Repository Name'));
+          td2.appendChild(document.createTextNode('Description'));
+          td3.appendChild(document.createTextNode('Last Edit Date'));
+          tr.appendChild(td1);
+          tr.appendChild(td2);
+          tr.appendChild(td3);
+          thead.appendChild(tr);
+          var tbody = document.createElement('tbody');
+          for(i in repos) {
               var tr = document.createElement('tr');
               var td1 = document.createElement('td');
               var td2 = document.createElement('td');
-              td1.appendChild(document.createTextNode(repos[i]['_source']['repo-name']));
-              td2.appendChild(document.createTextNode(repos[i]['_source']['description']));
+              var td3 = document.createElement('td');
+              var tdd = document.createElement('a');
+              tdd.setAttribute("href", repos[i].url.replace("https://github.com/Mahuahua/Mahuahua.github.io", "http://Mahuahua.github.io/webtools/"));
+              tdd.setAttribute("target", "_blank");
+              tdd.appendChild(document.createTextNode(repos[i].name));
+              td1.appendChild(tdd);
+              td2.appendChild(document.createTextNode(repos[i].description));
+              td3.appendChild(document.createTextNode(repos[i].updated_at));
               tr.appendChild(td1);
               tr.appendChild(td2);
+              tr.appendChild(td3);
               tbody.appendChild(tr);
           }
           table.appendChild(tbody);
@@ -76,6 +100,10 @@
     <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
       <h1>Mahuahua's GitHub Tour</h1>
       <input type="text" id="SearchText" value="Search for a repo" size="20">
+      Search in :
+      <input type="checkbox" id="name" value="name" checked> name
+      <input type="checkbox" id="description" value="description" checked> description
+      <input type="checkbox" id="readme" value="readme" checked> readme
       <button id="SearchButton"> Search </button> <br/>
 
       <div id="searchResult"></div>
