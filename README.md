@@ -4,7 +4,7 @@
 
 #### Find out my web tools and my repos from here!
 
-Also supports a list of web tools including
+Supports a list of web tools including
 
 24/219 sum
 
