@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
@@ -138,19 +138,36 @@
           var thead = table.createTHead();
           var tr = document.createElement('tr');
           var td = document.createElement('td');
+          var td2 = document.createElement('td');
+          var td3 = document.createElement('td');
           td.appendChild(document.createTextNode('File Name'));
+          td2.appendChild(document.createTextNode('From Repository'));
+          td3.appendChild(document.createTextNode('Local Path'));
           tr.appendChild(td);
+          tr.appendChild(td2);
+          tr.appendChild(td3);
           thead.appendChild(tr);
           var tbody = document.createElement('tbody');
           for(i in files) {
               var tr = document.createElement('tr');
               var td = document.createElement('td');
               var tdd = document.createElement('a');
+              var td2 = document.createElement('td');
+              var tdd2 = document.createElement('a');
+              var td3 = document.createElement('td');
               tdd.setAttribute("href", files[i].url);
               tdd.setAttribute("target", "_blank");
+              tdd2.setAttribute("href", files[i].repoUrl);
+              tdd2.setAttribute("target", "_blank");
               tdd.appendChild(document.createTextNode(files[i].name));
+              tdd2.appendChild(document.createTextNode(files[i].repo));
+              td3.appendChild(document.createTextNode(files[i].path));
+
               td.appendChild(tdd);
+              td2.appendChild(tdd2);
               tr.appendChild(td);
+              tr.appendChild(td2);
+              tr.appendChild(td3);
               tbody.appendChild(tr);
           }
           table.appendChild(tbody);
