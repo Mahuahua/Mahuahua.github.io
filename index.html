@@ -15,10 +15,18 @@
         getDisplayItems(searchText);
         $("#SearchButton").click(function(){
           searchText = $("#SearchText").val();
-          if (searchText == "" || searchText == "Search for a repo"){
+          if (searchText == "" || searchText == "Find a repo"){
             searchText = "";
           }
           getDisplayItems(searchText);
+        })
+
+        $("#SearchFileButton").click(function(){
+          searchFileText = $("#SearchFileText").val();
+          if (searchFileText == "" || searchFileText == "Find a file"){
+             return;
+          }
+          getDisplayFileItems(searchFileText);
         })
       });
 
@@ -44,6 +52,18 @@
         $.ajax(settings).done(function (response) {
           console.log(response);
           refreshDisplay(response);
+        });
+      }
+
+      function getDisplayFileItems(searchText)
+      {
+        var settings = {
+          "url": "http://ec2-34-199-166-215.compute-1.amazonaws.com:8049/repoFile?query="+searchText,
+          "method": "GET",
+        }
+        $.ajax(settings).done(function (response) {
+          console.log(response);
+          refreshFileDisplay(response);
         });
       }
 
@@ -77,11 +97,22 @@
               var td2 = document.createElement('td');
               var td3 = document.createElement('td');
               var tdd = document.createElement('a');
-              tdd.setAttribute("href", repos[i].url.replace("https://github.com/Mahuahua/Mahuahua.github.io", "http://Mahuahua.github.io/webtools/"));
+              tdd.setAttribute("href", repos[i].url);
               tdd.setAttribute("target", "_blank");
               tdd.appendChild(document.createTextNode(repos[i].name));
               td1.appendChild(tdd);
-              td2.appendChild(document.createTextNode(repos[i].description));
+
+
+              if (repos[i].description.indexOf("webtools") != -1){
+
+                var tdd2 = document.createElement('a');
+                tdd2.setAttribute("href", "http://Mahuahua.github.io/webtools/");
+                tdd2.setAttribute("target", "_blank");
+                tdd2.appendChild(document.createTextNode(repos[i].description));
+                td2.appendChild(tdd2);
+              } else {
+                td2.appendChild(document.createTextNode(repos[i].description));
+              }
               td3.appendChild(document.createTextNode(repos[i].updated_at));
               tr.appendChild(td1);
               tr.appendChild(td2);
@@ -93,18 +124,54 @@
       }
 
 
+      function refreshFileDisplay(response){
+          $("table").remove();
+          $("div").html("");
+          var files = response.hits;
+          var hitCount = response.hit_count;
+          if (hitCount == 0){
+            $("div").append("No files found");
+            return;
+          }
+          var table = document.createElement('table');
+          table.className = "table table-striped table-";
+          var thead = table.createTHead();
+          var tr = document.createElement('tr');
+          var td = document.createElement('td');
+          td.appendChild(document.createTextNode('File Name'));
+          tr.appendChild(td);
+          thead.appendChild(tr);
+          var tbody = document.createElement('tbody');
+          for(i in files) {
+              var tr = document.createElement('tr');
+              var td = document.createElement('td');
+              var tdd = document.createElement('a');
+              tdd.setAttribute("href", files[i].url);
+              tdd.setAttribute("target", "_blank");
+              tdd.appendChild(document.createTextNode(files[i].name));
+              td.appendChild(tdd);
+              tr.appendChild(td);
+              tbody.appendChild(tr);
+          }
+          table.appendChild(tbody);
+          document.body.appendChild(table);
+      }
     </script>
   </head>
   <body>
 
     <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
       <h1>Mahuahua's GitHub Tour</h1>
-      <input type="text" id="SearchText" value="Search for a repo" size="20">
+      <input type="text" id="SearchText" value="Find a Repo" size="20">
       Search in :
       <input type="checkbox" id="name" value="name" checked> name
       <input type="checkbox" id="description" value="description" checked> description
       <input type="checkbox" id="readme" value="readme" checked> readme
-      <button id="SearchButton"> Search </button> <br/>
+      <button id="SearchButton"> Search for a Repository </button> <br/>
+
+
+      <input type="text" id="SearchFileText" value="Find a file" size="20">
+      <button id="SearchFileButton"> Search for a File </button> <br/>
 
       <div id="searchResult"></div>
 
