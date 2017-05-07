@@ -15,7 +15,7 @@
         getDisplayItems(searchText);
         $("#SearchButton").click(function(){
           searchText = $("#SearchText").val();
-          if (searchText == "" || searchText == "Find a repo"){
+          if (searchText == "" || searchText == "Find a Repo"){
             searchText = "";
           }
           getDisplayItems(searchText);
@@ -23,7 +23,7 @@
 
         $("#SearchFileButton").click(function(){
           searchFileText = $("#SearchFileText").val();
-          if (searchFileText == "" || searchFileText == "Find a file"){
+          if (searchFileText == "" || searchFileText == "Find a File"){
              return;
           }
           getDisplayFileItems(searchFileText);
@@ -170,7 +170,7 @@
       <button id="SearchButton"> Search for a Repository </button> <br/>
 
 
-      <input type="text" id="SearchFileText" value="Find a file" size="20">
+      <input type="text" id="SearchFileText" value="Find a File" size="20">
       <button id="SearchFileButton"> Search for a File </button> <br/>
 
       <div id="searchResult"></div>
