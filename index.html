@@ -46,7 +46,7 @@
           searchIn = "&searchIn=" + searchIn.substring(1);
         }
         var settings = {
-          "url": "http://ec2-34-199-166-215.compute-1.amazonaws.com:8049/repo?query="+searchText+searchIn,
+          "url": "http://ec2-54-212-9-108.us-west-2.compute.amazonaws.com:8049/repo?query="+searchText+searchIn,
           "method": "GET",
         }
         $.ajax(settings).done(function (response) {
@@ -58,7 +58,7 @@
       function getDisplayFileItems(searchText)
       {
         var settings = {
-          "url": "http://ec2-34-199-166-215.compute-1.amazonaws.com:8049/repoFile?query="+searchText,
+          "url": "http://ec2-54-212-9-108.us-west-2.compute.amazonaws.com:8049/repoFile?query="+searchText,
           "method": "GET",
         }
         $.ajax(settings).done(function (response) {
